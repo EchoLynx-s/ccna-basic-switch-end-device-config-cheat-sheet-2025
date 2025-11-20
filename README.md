@@ -103,30 +103,47 @@ High-level view of what’s in this module:
 
 ### 2.0.1 Why should I take this module?
 
-🧠 **Big idea**  
-> _Placeholder – will add summary once I finish this subsection._  
+In Module 1 you looked at what networks are and why they matter.  
+In Module 2 you actually start **configuring real devices**.
 
-- Why device configuration skills matter.
-- How Module 2 connects to Module 1 (network basics) and later modules.
+As a network technician/engineer you will:
 
-✅ **Checklist (I should be able to…)**
+- Set up **new networks** or maintain and upgrade existing ones.
+- Configure **switches and end devices** so they are **secure** and **fit the requirements** of the network.
+- Take devices that come with only a **generic factory config** and turn them into properly tuned nodes in your topology.
 
-- Explain in one sentence why knowing IOS is important for a network tech.  
-- Describe at a high level what I’ll do in this module (configure switches & end devices).
+In this module you learn how to:
+
+- **Access Cisco IOS** on network devices.
+- Use **basic configuration commands**.
+- Configure and verify:
+  - a Cisco IOS device (switch), and  
+  - an end device (PC) with an **IP address**.
+
+Everything else in network administration (routing, VLANs, security, etc.) depends on first being able to **log in, configure, and verify** your switches and hosts.
 
 ---
 
 ### 2.0.2 What will I learn to do in this module?
 
-🧠 **Big idea**  
-> _Placeholder – short description of learning objectives for Module 2._
+**Module Title:** Basic Switch and End Device Configuration  
 
-Planned bullets:
+**Module Objective:**  
+Implement initial settings (passwords, IP addressing, and default gateway parameters) on a network switch and on end devices.
 
-- List the **main tasks** (access device, navigate IOS, configure, save, test).
-- Note which **tools** are used (console cable, terminal, Packet Tracer).
+| Topic # | Topic Title               | After this topic you should be able to…                                                 |
+|--------:|---------------------------|----------------------------------------------------------------------------------------|
+| **2.1** | Cisco IOS Access          | Explain how to access a Cisco IOS device for configuration purposes.                  |
+| **2.2** | IOS Navigation            | Explain how to navigate Cisco IOS to configure network devices.                       |
+| **2.3** | The Command Structure     | Describe the basic command structure of Cisco IOS software.                           |
+| **2.4** | Basic Device Configuration| Configure a Cisco IOS device using the CLI.                                           |
+| **2.5** | Save Configurations       | Use IOS commands to save the running configuration.                                   |
+| **2.6** | Ports and Addresses       | Explain how devices communicate across network media using ports and addresses.       |
+| **2.7** | Configure IP Addressing   | Configure a host device with an IP address and default gateway.                       |
+| **2.8** | Verify Connectivity       | Verify connectivity between two end devices using common network tools (e.g. `ping`). |
 
 ---
+
 
 ## 2.1 Cisco IOS Access
 
