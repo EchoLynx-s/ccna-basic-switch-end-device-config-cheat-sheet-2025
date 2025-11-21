@@ -12,7 +12,6 @@ Focus is on **IOS basics, device setup, IP addressing, and connectivity testing*
 ## Table of Contents
 
 - [Module 2 Overview](#module-2-overview)
-- [How to Use This Cheat Sheet](#how-to-use-this-cheat-sheet)
 - [Module Map](#module-map)
 - [2.0 Introduction](#20-introduction)
   - [2.0.1 Why should I take this module?](#201-why-should-i-take-this-module)
