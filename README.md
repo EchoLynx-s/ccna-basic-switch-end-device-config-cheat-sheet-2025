@@ -1457,3 +1457,322 @@ Use this checklist before/while you answer:
 
 If you can answer those confidently, you’re in good shape for this section.
 
+---
+
+## 2.7 Configure IP Addressing
+
+**Topic objective:** Give IPv4/IPv6 addresses to PCs and switches so they can actually talk to each other, and verify it.
+
+Think of this section as:
+
+- How to set IPs on Windows hosts (manual + DHCP).
+- How to view / verify IP configuration from the CLI.
+- How to give a switch a management IP on its SVI.
+- How to tie it all together in Packet Tracer.
+
+---
+
+### 2.7.1 Manual IP Address Configuration for End Devices
+
+End devices need IP addresses just like phones need numbers.  
+On Windows you can configure IPv4 manually.
+
+**Path on Windows**
+
+1. Open **Control Panel** → **Network and Sharing Center**.
+2. Click **Change adapter settings**.
+3. Right-click your active adapter (e.g. *Ethernet*) → **Properties**.
+4. Select **Internet Protocol Version 4 (TCP/IPv4)** → **Properties**.
+
+You’ll see two options:
+
+- **Obtain an IP address automatically** – use DHCP.
+- **Use the following IP address** – manual config.
+
+For manual config, fill in:
+
+- **IP address** – e.g. `192.168.1.10`
+- **Subnet mask** – e.g. `255.255.255.0`
+- **Default gateway** – router’s IP, e.g. `192.168.1.1`
+- **DNS servers** – IPs of DNS servers (e.g. your router or public DNS).
+
+IPv6 uses a similar window (**Internet Protocol Version 6 (TCP/IPv6)**) with:
+
+- IPv6 address (e.g. `2001:db8:acad:10::10`)
+- Prefix length (e.g. `64`)
+- Default gateway (e.g. `fe80::1`)
+
+---
+
+### 2.7.2 Automatic IP Address Configuration for End Devices
+
+Most end devices default to **DHCP**, which auto-fills all IP settings.
+
+Without DHCP, for every device you’d have to set:
+
+- IPv4 address  
+- Subnet mask  
+- Default gateway  
+- DNS servers  
+
+…by hand. That doesn’t scale and invites mistakes (like duplicate IPs).
+
+**On Windows to use DHCP:**
+
+In the IPv4 properties window:
+
+- Select **Obtain an IP address automatically**
+- Select **Obtain DNS server address automatically**
+
+The PC then:
+
+1. Sends DHCP requests on the network.
+2. Receives an IPv4 address, subnet mask, gateway, and DNS server.
+
+For IPv6, similar ideas apply with **DHCPv6** and **SLAAC** (Stateless Address Autoconfiguration).
+
+---
+
+### 2.7.3 Syntax Checker – Verify Windows PC IP Configuration
+
+You can check what IP a Windows PC actually has using the command line.
+
+**Command:**
+
+```text
+ipconfig
+```
+
+Example output:
+
+```text
+C:\>ipconfig
+
+Windows IP Configuration
+
+Ethernet adapter Local Area Connection:
+
+   Connection-specific DNS Suffix  . : cisco.com
+   Link-local IPv6 Address . . . . . : fe80::b0ef:ca42:af2c:c6c7%16
+   IPv4 Address. . . . . . . . . . . : 192.168.1.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.1.1
+```
+
+Key fields:
+
+- **IPv4 Address** – host’s address.
+- **Subnet Mask** – defines the network.
+- **Default Gateway** – router used for off-net traffic.
+- **Link-local IPv6 + other IPv6 lines** – IPv6 details.
+
+Use `ipconfig /all` for more detailed info (MAC, DHCP server, lease times, etc.).
+
+---
+
+### 2.7.4 Switch Virtual Interface Configuration
+
+Layer-2 switches don’t need an IP to forward frames, but **you** need an IP on the switch to manage it (SSH/Telnet, ping, etc.). That’s done on a **Switch Virtual Interface (SVI)**, usually **VLAN 1** in these labs.
+
+**Goal:** Give the switch a management IPv4 address and default gateway.
+
+Example:
+
+```text
+Sw-Floor-1# configure terminal
+Sw-Floor-1(config)# interface vlan 1
+Sw-Floor-1(config-if)# ip address 192.168.1.20 255.255.255.0
+Sw-Floor-1(config-if)# no shutdown
+Sw-Floor-1(config-if)# exit
+Sw-Floor-1(config)# ip default-gateway 192.168.1.1
+```
+
+Breakdown:
+
+- `interface vlan 1`  
+  → enters the SVI interface for VLAN 1 (virtual, not a physical port).
+
+- `ip address 192.168.1.20 255.255.255.0`  
+  → assigns the management IPv4 address and mask.
+
+- `no shutdown`  
+  → turns the SVI *on*. Without this, the interface stays administratively down.
+
+- `ip default-gateway 192.168.1.1`  
+  → tells the switch which router to use to reach remote networks.
+
+After this, you should be able to **ping the switch’s IP** from hosts in the same LAN.
+
+---
+
+### 2.7.5 Syntax Checker – Configure a Switch Virtual Interface
+
+Practice steps (typical flow):
+
+1. **Enter VLAN 1 interface config:**
+
+   ```text
+   Switch(config)# interface vlan 1
+   ```
+
+2. **Assign IP + mask:**
+
+   ```text
+   Switch(config-if)# ip address 192.168.1.20 255.255.255.0
+   ```
+
+3. **Enable the SVI:**
+
+   ```text
+   Switch(config-if)# no shutdown
+   ```
+
+4. Optionally set the default gateway from global config:
+
+   ```text
+   Switch(config)# ip default-gateway 192.168.1.1
+   ```
+
+You can verify with:
+
+```text
+Switch# show ip interface brief
+Switch# show running-config
+```
+
+---
+
+### 2.7.6 Packet Tracer – Implement Basic Connectivity
+
+This Packet Tracer activity glues together everything from Module 2:  
+basic switch config, IP addressing on switches and PCs, and connectivity tests.
+
+**Addressing table (from the PT file):**
+
+| Device | Interface | IP Address     | Subnet Mask     |
+| ------ | --------- | ------------- | --------------- |
+| S1     | VLAN 1    | 192.168.1.253 | 255.255.255.0   |
+| S2     | VLAN 1    | 192.168.1.254 | 255.255.255.0   |
+| PC1    | NIC       | 192.168.1.1   | 255.255.255.0   |
+| PC2    | NIC       | 192.168.1.2   | 255.255.255.0   |
+
+#### Part 1 – Basic switch configuration (S1 and S2)
+
+For **each switch (S1 and S2):**
+
+1. **Set hostname**
+
+   ```text
+   Switch> enable
+   Switch# configure terminal
+   Switch(config)# hostname S1
+   ```
+
+2. **Secure console (user EXEC)**
+
+   ```text
+   S1(config)# line console 0
+   S1(config-line)# password cisco
+   S1(config-line)# login
+   S1(config-line)# end
+   ```
+
+3. **Secure privileged EXEC**
+
+   ```text
+   S1(config)# enable secret class
+   ```
+
+4. **Add MOTD banner**
+
+   ```text
+   S1(config)# banner motd #Authorized access only. Violators will be prosecuted to the full extent of the law.#
+   ```
+
+5. **Save configuration to NVRAM**
+
+   ```text
+   S1# copy running-config startup-config
+   ```
+
+Repeat for **S2** (changing `hostname S2`).
+
+You can verify passwords and banner with:
+
+- `show running-config`
+- Logging out/in via console (you should see the banner and be prompted for passwords).
+
+#### Part 2 – Configure the PCs
+
+On **PC1** and **PC2**:
+
+1. Desktop tab → **IP Configuration**.
+2. Set:
+
+   - PC1:  
+     - IP: `192.168.1.1`  
+     - Mask: `255.255.255.0`  
+
+   - PC2:  
+     - IP: `192.168.1.2`  
+     - Mask: `255.255.255.0`
+
+3. Test ping from PC1:
+
+   ```text
+   PC1> ping 192.168.1.253   (S1)
+   ```
+
+If it fails here, remember the switches don’t yet have their management IPs configured.
+
+#### Part 3 – Configure switch management interfaces (SVIs)
+
+On **S1**:
+
+```text
+S1# configure terminal
+S1(config)# interface vlan 1
+S1(config-if)# ip address 192.168.1.253 255.255.255.0
+S1(config-if)# no shutdown
+S1(config-if)# exit
+```
+
+On **S2**:
+
+```text
+S2# configure terminal
+S2(config)# interface vlan 1
+S2(config-if)# ip address 192.168.1.254 255.255.255.0
+S2(config-if)# no shutdown
+S2(config-if)# exit
+```
+
+Then:
+
+- Verify with `show ip interface brief` and/or `show running-config`.
+- Save configs again:
+
+  ```text
+  S1# copy running-config startup-config
+  S2# copy running-config startup-config
+  ```
+
+#### Final connectivity checks
+
+From **PC1**:
+
+```text
+PC1> ping 192.168.1.2     (PC2)
+PC1> ping 192.168.1.253   (S1)
+PC1> ping 192.168.1.254   (S2)
+```
+
+From **PC2** you can do similar tests, and from the switches you can also ping the hosts.
+
+If first ping is 80% success and then 100% on retry, that’s normal ARP behaviour; if pings consistently fail, re-check:
+
+- IP addresses and masks on PCs and SVIs
+- Cables and ports in Packet Tracer
+- Whether VLAN 1 SVIs are **up** (`no shutdown`) and ports are in VLAN 1.
+
+---
