@@ -1930,3 +1930,193 @@ Now that interfaces and addresses are set, you test actual connectivity with **`
 - [ ] Test **both directions** (A → B and B → A)
 
 If all those pings succeed, your basic Layer 3 connectivity for this module is working.
+
+---
+
+# 2.9 Module Practice and Quiz – Basic Switch and End Device Configuration
+
+This section is where you *consolidate* everything from Module 2: IOS access, navigation, command structure, basic security, saving configs, IP addressing, and connectivity checks.
+
+---
+
+## 2.9.1 Packet Tracer – Basic Switch and End Device Configuration
+
+**Scenario:**  
+You are a newly hired LAN technician. Your manager asks you to prove you can configure a small LAN with two switches and two hosts using Cisco IOS and basic IP addressing.
+
+### Addressing Table (Logical)
+
+| Device | Interface | IP Address    | Subnet Mask     |
+|--------|-----------|--------------|-----------------|
+| S1     | VLAN 1    | 192.168.1.1  | 255.255.255.0   |
+| S2     | VLAN 1    | 192.168.1.2  | 255.255.255.0   |
+| PC-A   | NIC       | 192.168.1.10 | 255.255.255.0   |
+| PC-B   | NIC       | 192.168.1.11 | 255.255.255.0   |
+
+### Objectives
+
+- **Part 1 – Set Up the Topology**
+  - Place two switches (S1, S2) and two PCs (PC-A, PC-B).
+  - Cable:
+    - S1 F0/1 ↔ S2 F0/1 (copper crossover).
+    - S1 F0/6 ↔ PC-A F0 (straight-through).
+    - S2 F0/18 ↔ PC-B F0 (straight-through).
+  - Wait for link lights to transition from **amber** to **green**.
+
+- **Part 2 – Configure PC Hosts**
+  - On each PC: `Desktop > IP Configuration`.
+  - PC-A: `192.168.1.10 / 255.255.255.0` (no default gateway yet).
+  - PC-B: `192.168.1.11 / 255.255.255.0`.
+  - Verify with `ipconfig /all` in the command prompt.
+  - Test connectivity PC-A ↔ PC-B with:
+    ```text
+    ping 192.168.1.11
+    ```
+  - Fix cabling or IP typos if the ping fails.
+
+- **Part 3 – Configure and Verify Basic Switch Settings**
+  - Console into S1 from PC-A:
+    - Use a **console cable** from PC-A RS-232 → S1 console port.
+    - `Desktop > Terminal` → press **Enter** to get `Switch>`.
+  - From there:
+    ```text
+    enable
+    configure terminal
+    hostname S1
+    ! Console password
+    line console 0
+      password cisco
+      login
+    exit
+    ! Privileged EXEC password
+    enable secret class
+    ! Management SVI
+    interface vlan 1
+      ip address 192.168.1.1 255.255.255.0
+      no shutdown
+    exit
+    ! Login banner
+    banner motd #UNAUTHORIZED ACCESS PROHIBITED#
+    ! Save config
+    copy running-config startup-config
+    ```
+  - Use **show** commands:
+    - `show running-config`
+    - `show version`
+    - `show ip interface brief`
+  - Repeat the same flow on **S2** with:
+    ```text
+    hostname S2
+    interface vlan 1
+      ip address 192.168.1.2 255.255.255.0
+      no shutdown
+    ```
+  - From PCs and switches, **ping** all other devices to confirm full connectivity.
+
+---
+
+## 2.9.2 Lab – Basic Switch and End Device Configuration (Physical Mode)
+
+This is the *hands‑on* version of 2.9.1 using **Packet Tracer Physical Mode (PTPM)** or real lab gear. fileciteturn5file1
+
+### Skills You Practice
+
+- Building the physical topology: racks, shelves, cables, power.
+- Setting static IPv4 addresses on PCs.
+- Configuring basic switch security and management:
+  - Hostname.
+  - Console + privileged EXEC passwords.
+  - SVI IPv4 address on VLAN 1.
+  - MOTD banner.
+- Verifying configuration with **show** commands.
+- Testing end‑to‑end connectivity with `ping`.
+
+### Lab Structure
+
+1. **Part 1 – Set Up the Network Topology**
+   - Place S1, S2 in the rack; PC-A, PC-B on the table.
+   - Power on PCs.
+   - Cable exactly like in 2.9.1 (crossover between switches, straight‑through from switches to PCs).
+   - Confirm link lights go **green**.
+
+2. **Part 2 – Configure PC Hosts**
+   - Assign IPs using the addressing table above.
+   - Verify using `ipconfig /all`.
+   - Ping PC-B from PC-A to confirm host‑to‑host connectivity before touching the switches.
+
+3. **Part 3 – Configure and Verify Basic Switch Settings**
+   - Console into S1 and S2.
+   - Configure:
+     - `hostname`
+     - `enable secret class`
+     - `line console 0` password `cisco` + `login`
+     - `interface vlan 1` IP + `no shutdown`
+     - `banner motd` warning text.
+   - Save to NVRAM with `copy running-config startup-config`.
+   - Check:
+     - `show running-config`
+     - `show version`
+     - `show ip interface brief` (status of F0/1, F0/6, F0/18, VLAN1).
+   - Record which interfaces are **up/up** vs **down/down** (only cabled/active ports will be up).
+
+4. **Reflection Hints**
+   - **Why some FastEthernet ports are down:** usually no cable, wrong cable type, or connected device powered off / interface shutdown.
+   - **What prevents pings between PCs:** wrong IP/subnet mask, bad cabling, interface shutdown, or unsaved/missing switch config.
+
+---
+
+## 2.9.3 What Did I Learn in This Module?
+
+High‑level recap of **Module 2 – Basic Switch and End Device Configuration**:
+
+- Every networking device runs an **operating system** (Windows, Linux, or Cisco IOS) and is managed through a **CLI** or GUI.
+- Cisco IOS organizes management into **modes**:
+  - User EXEC (`>`)
+  - Privileged EXEC (`#`)
+  - Global configuration (`(config)#`)
+  - Sub‑modes (line config, interface config, etc.).
+- You move between these modes with commands like `enable`, `configure terminal`, `exit`, and `end`.
+- IOS commands follow a consistent **syntax**: command + keywords + arguments, and IOS helps with:
+  - **Context‑sensitive help** (`?`).
+  - **Syntax checking** (`^` markers, incomplete/ambiguous command messages).
+- First configuration task on a new device: set a **meaningful hostname** so you know which device you’re on.
+- Always **secure access**:
+  - Console and VTY passwords.
+  - `enable secret` for privileged EXEC.
+  - Encrypt all passwords with `service password-encryption`.
+  - Configure a clear MOTD **warning banner**.
+- Two key configuration files:
+  - `running-config` (in RAM, live, lost on reload).
+  - `startup-config` (in NVRAM, kept on reload).
+  - Use `copy running-config startup-config` (or `copy run start`) to save.
+- You can **capture configs to text files** via your terminal program and paste them back to restore devices.
+- IPv4/IPv6 addresses let devices find each other and communicate end‑to‑end; IPv4 uses dotted decimal addresses (0–255 per octet).
+- PCs can get addresses:
+  - **Manually** (static configuration).
+  - **Automatically** via **DHCP** (or DHCPv6/SLAAC for IPv6).
+- To manage a switch remotely, you configure an **SVI (interface vlan 1)** with an IP and subnet mask, plus (usually) a default gateway.
+- Verification is critical:
+  - On PCs: `ipconfig`.
+  - On switches/routers: `show ip interface brief`, `show running-config`, `ping`.
+  - `ping` tests basic reachability in *both* directions.
+
+---
+
+## 2.9.4 Module Quiz – Basic Switch and End Device Configuration
+
+The quiz for this module:
+
+- 14 questions.
+- **70%** required to pass.
+- Unlimited attempts, no time limit per attempt.
+
+Before attempting the quiz, make sure you are comfortable with:
+
+- IOS modes and navigation (2.1–2.2).
+- Command structure, help, and shortcuts (2.3).
+- Basic device security (hostnames, passwords, banners) (2.4).
+- Saving configs and recovering from mistakes (2.5).
+- IP addressing concepts, ports, and interfaces (2.6–2.7).
+- Verifying interfaces and connectivity with `show` and `ping` (2.8).
+
+Use the labs and Packet Tracer activities to drill the commands until they feel natural.
