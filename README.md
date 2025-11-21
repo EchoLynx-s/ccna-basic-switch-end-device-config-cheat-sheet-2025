@@ -57,12 +57,24 @@ Focus is on **IOS basics, device setup, IP addressing, and connectivity testing*
   - [2.5.4 Capture Configuration to a Text File](#254-capture-configuration-to-a-text-file)
   - [2.5.5 Packet Tracer – Configure Initial Switch Settings](#255-packet-tracer--configure-initial-switch-settings)
 - [2.6 Ports and Addresses](#26-ports-and-addresses)
+  - [2.6.1 IP Addresses](#261-ip-addresses)
+  - [2.6.2 Interfaces and Ports](#262-interfaces-and-ports)
+  - [2.6.3 Check Your Understanding – Ports and Addresses](#263-check-your-understanding--ports-and-addresses)
 - [2.7 Configure IP Addressing](#27-configure-ip-addressing)
+  - [2.7.1 Manual IP Address Configuration for End Devices](#271-manual-ip-address-configuration-for-end-devices)
+  - [2.7.2 Automatic IP Address Configuration for End Devices](#272-automatic-ip-address-configuration-for-end-devices)
+  - [2.7.3 Syntax Checker – Verify Windows PC IP Configuration](#273-syntax-checker--verify-windows-pc-ip-configuration)
+  - [2.7.4 Switch Virtual Interface Configuration](#274-switch-virtual-interface-configuration)
+  - [2.7.5 Syntax Checker – Configure a Switch Virtual Interface](#275-syntax-checker--configure-a-switch-virtual-interface)
+  - [2.7.6 Packet Tracer – Implement Basic Connectivity](#276-packet-tracer--implement-basic-connectivity)
 - [2.8 Verify Connectivity](#28-verify-connectivity)
+  - [2.8.1 Video Activity – Test the Interface Assignment](#281-video-activity--test-the-interface-assignment)
+  - [2.8.2 Video Activity – Test End-to-End Connectivity](#282-video-activity--test-end-to-end-connectivity)
 - [2.9 Practice Ideas](#29-practice-ideas)
-
-
----
+  - [2.9.1 Packet Tracer – Basic Switch and End Device Configuration](#291-packet-tracer--basic-switch-and-end-device-configuration)
+  - [2.9.2 Lab – Basic Switch and End Device Configuration](#292-lab--basic-switch-and-end-device-configuration)
+  - [2.9.3 What did I learn in this module?](#293-what-did-i-learn-in-this-module)
+  - [2.9.4 Module Quiz – Basic Switch and End Device Configuration](#294-module-quiz--basic-switch-and-end-device-configuration)
 
 ## Module 2 Overview
 
