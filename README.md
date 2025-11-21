@@ -1328,3 +1328,132 @@ This PT activity puts everything from 2.4 and 2.5 into practice:
 
 End goal: a switch with secure administrative access whose configuration is **properly saved** and ready for reloads or power loss.
 
+---
+## 2.6 Ports and Addresses
+
+Topic objective: Understand how IP addresses, interfaces, and ports fit together so you can see **where** traffic goes and **how** devices connect.
+
+At this point you should be able to look at a PC or switch, check its IP settings, and know:
+
+- what network it lives on  
+- which gateway/router it uses to leave that network  
+- which physical/logical port traffic is using  
+
+---
+
+### 2.6.1 IP Addresses
+
+IP addresses are how devices find each other end-to-end across a network or the internet.  
+Every end device that talks on an IP network needs an address.
+
+Examples of devices that need IPs:
+
+- Computers (workstations, laptops, file/web servers)
+- Network printers
+- VoIP phones
+- Security cameras
+- Smartphones and tablets
+- Mobile handheld devices (e.g. wireless barcode scanners)
+
+#### IPv4 basics
+
+- IPv4 addresses are written in **dotted decimal**: `a.b.c.d`  
+  - Each part (octet) is 0–255.
+- IPv4 in this course is always used together with:
+  - **Subnet mask** – identifies the *network* vs *host* portion.
+  - **Default gateway** – router IP used to reach remote networks.
+
+Example PC IPv4 config:
+
+- IP address: `192.168.1.10`  
+- Subnet mask: `255.255.255.0`  
+- Default gateway: `192.168.1.1`
+
+Here:
+
+- `192.168.1.0/24` is the network.
+- `.10` is the host address on that LAN.
+- `192.168.1.1` is usually the router interface on that LAN.
+
+#### IPv6 basics
+
+IPv6 is the newer IP version gradually replacing IPv4.
+
+- 128-bit address written in **hex**, groups separated by colons `:`.  
+  Example: `2001:db8:acad:10::10`
+- A **prefix length** (like `/64`) plays the role of the subnet mask.
+- You still normally configure:
+  - IPv6 address
+  - Prefix length
+  - Default gateway (often a link-local like `fe80::1`)
+
+Example PC IPv6 config:
+
+- IPv6 address: `2001:db8:acad:10::10`  
+- Prefix length: `64`  
+- Default gateway: `fe80::1`
+
+IPv6 addresses are not case-sensitive – `ABCD` and `abcd` are treated the same.
+
+---
+
+### 2.6.2 Interfaces and Ports
+
+To actually move bits around, you need **interfaces** (ports) and **media** (cables/wireless).
+
+Common network media:
+
+- **Copper** (twisted pair) – e.g. Ethernet cables (UTP)
+- **Fiber-optic** – long distance, high bandwidth
+- **Coaxial** – less common in modern LANs
+- **Wireless** – Wi-Fi, cellular, etc.
+
+Key differences between media types:
+
+- **Maximum distance** the signal can travel
+- **Environment** where they can be installed (indoor, outdoor, noisy, etc.)
+- **Amount of data / speed** they can carry
+- **Cost of cable + installation**
+
+Each link needs:
+
+1. A **specific media type** (copper, fiber, wireless), and  
+2. A **matching interface** on the device (RJ-45 port, SFP fiber port, Wi-Fi NIC, etc.)
+
+#### Switch ports and SVIs
+
+Cisco IOS **Layer 2 switches**:
+
+- Have many physical **Ethernet ports** for devices and uplinks.
+- Forward frames using **MAC addresses** – they do *not* need an IP address just to switch traffic.
+
+For management, switches use **Switch Virtual Interfaces (SVIs)**:
+
+- An SVI is a **virtual Layer 3 interface** created in software (no physical port).
+- It lets you manage the switch over the network using IPv4/IPv6 (SSH, Telnet, web, etc.).
+- Default SVI: `VLAN 1` – comes “out of the box” on most switches.
+
+Notes:
+
+- The IP address you configure on the SVI is for **remote management**, not for normal L2 switching.
+- A pure Layer 2 switch can forward frames even **without** any IP configured; the IP is just so *you* can reach the CLI remotely.
+
+---
+
+### 2.6.3 Check Your Understanding – Ports and Addresses
+
+NetAcad gives you a short quiz here (3 questions, 70% to pass).  
+Use this checklist before/while you answer:
+
+- Can I explain the difference between:
+  - IP address
+  - Subnet mask / prefix length
+  - Default gateway?
+- Do I know which devices need IP addresses on a LAN?
+- Do I know why a switch might have:
+  - Many physical ports **but only one SVI** for management?
+- Can I distinguish between:
+  - Copper, fiber, and wireless in terms of distance/speed/cost?
+
+If you can answer those confidently, you’re in good shape for this section.
+
