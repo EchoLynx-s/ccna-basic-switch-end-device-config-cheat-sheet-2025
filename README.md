@@ -25,6 +25,13 @@ Focus is on **IOS basics, device setup, IP addressing, and connectivity testing*
   - [2.1.5 Terminal Emulation Programs](#215-terminal-emulation-programs)
   - [2.1.6 Check Your Understanding – Cisco IOS Access](#216-check-your-understanding--cisco-ios-access)
 - [2.2 IOS Navigation](#22-ios-navigation)
+  - [2.2.1 Primary Command Modes](#221-primary-command-modes)
+  - [2.2.2 Configuration Mode and Subconfiguration Modes](#222-configuration-mode-and-subconfiguration-modes)
+  - [2.2.3 Video – IOS CLI Primary Command Modes](#223-video--ios-cli-primary-command-modes)
+  - [2.2.4 Navigate Between IOS Modes](#224-navigate-between-ios-modes)
+  - [2.2.5 Video – Navigate Between IOS Modes](#225-video--navigate-between-ios-modes)
+  - [2.2.6 A Note About Syntax Checker Activities](#226-a-note-about-syntax-checker-activities)
+  - [2.2.7 Syntax Checker – Navigate Between IOS Modes](#227-syntax-checker--navigate-between-ios-modes)
 - [2.3 The Command Structure](#23-the-command-structure)
 - [2.4 Basic Device Configuration](#24-basic-device-configuration)
 - [2.5 Save Configurations](#25-save-configurations)
@@ -32,6 +39,7 @@ Focus is on **IOS basics, device setup, IP addressing, and connectivity testing*
 - [2.7 Configure IP Addressing](#27-configure-ip-addressing)
 - [2.8 Verify Connectivity](#28-verify-connectivity)
 - [2.9 Practice Ideas](#29-practice-ideas)
+
 
 
 ---
