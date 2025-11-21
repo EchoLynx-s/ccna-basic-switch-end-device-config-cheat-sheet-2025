@@ -1073,3 +1073,246 @@ If you can explain, in your own words, how to:
 4. Add a legal warning,
 
 …then you’ve nailed **2.4 Basic Device Configuration**.
+
+## 2.5 Save Configurations
+
+**Topic objective:** Understand the difference between `running-config` and `startup-config`, how to save / roll back changes, and how to archive configs to a text file.
+
+Think of this section as:
+
+- where your config *lives* (RAM vs NVRAM),  
+- how to **save** or **undo** changes,  
+- and how to **export/import** configs using a terminal client.
+
+---
+
+### 2.5.1 Configuration Files
+
+IOS keeps the device configuration in two main files:
+
+- **running-config**  
+  - Stored in **RAM** (volatile).  
+  - Represents the *current* configuration in use.  
+  - Any change you make in config mode updates `running-config` immediately.
+
+- **startup-config**  
+  - Stored in **NVRAM** (non-volatile).  
+  - Loaded when the device boots or reloads.  
+  - Only changes when you explicitly **save**.
+
+Key commands:
+
+```text
+Sw-Floor-1# show running-config
+Sw-Floor-1# show startup-config
+```
+
+Save the current running configuration to be used at next reload:
+
+```text
+Sw-Floor-1# copy running-config startup-config
+Destination filename [startup-config]?  <press Enter>
+```
+
+> If the device loses power or reloads **before** you do `copy run start`, all unsaved changes are lost.
+
+---
+
+### 2.5.2 Alter the Running Configuration
+
+Sometimes you change something and regret it. How you revert depends on whether you’ve already saved.
+
+#### Case 1 – Bad changes **not saved** yet
+
+Options:
+
+- Manually remove or fix the changed commands in config mode, **or**
+- Reload the device to go back to the last saved `startup-config`:
+
+```text
+Sw-Floor-1# reload
+System configuration has been modified. Save? [yes/no]: no
+```
+
+Answer **no** so the current `running-config` is discarded and the device reloads using the existing `startup-config`.
+
+Downside: the device is offline for a short time while it reloads.
+
+#### Case 2 – Bad changes **already saved** to startup-config
+
+You need to wipe the saved config and start fresh:
+
+1. **Erase startup-config** from NVRAM:
+
+   ```text
+   Sw-Floor-1# erase startup-config
+   Erasing the nvram filesystem will remove all configuration files! Continue? [confirm]
+   ```
+
+   Press **Enter** to confirm.
+
+2. **Reload** to clear `running-config` from RAM:
+
+   ```text
+   Sw-Floor-1# reload
+   ```
+
+After reload, the switch comes up with its **factory default** config (no hostname, no passwords, etc.).
+
+---
+
+### 2.5.3 Video – Alter the Running Configuration
+
+The video shows a full workflow:
+
+- **Secure and name the switch**
+
+  - Set hostname (`hostname S1`).
+  - Configure console and enable passwords.
+  - Save with:
+
+    ```text
+    S1# copy running-config startup-config
+    ```
+
+- **Where configs live**
+
+  - `running-config` → RAM (volatile).
+  - `startup-config` → NVRAM (non-volatile).
+  - Use `dir nvram:` to see `startup-config`.
+
+- **Command shortening**
+
+  - Instead of full command:
+
+    ```text
+    copy running-config startup-config
+    ```
+
+  - Use:
+
+    ```text
+    copy run start
+    ```
+
+- **Reload with saved config**
+
+  - `reload` → after reboot, hostname, banner, passwords all remain because `startup-config` was saved.
+
+- **Erase config and reload**
+
+  - From privileged EXEC:
+
+    ```text
+    S1# erase startup-config
+    S1# reload
+    ```
+
+  - After reload, the switch comes up with default hostname `Switch` and no banner or passwords.
+
+- **Revert to last saved config without reload**
+
+  - Scenario:  
+    1. Save configuration when hostname = `MySwitch`.  
+    2. Make more changes (e.g. console password, change hostname to `S1`) but **don’t** save.  
+    3. Decide you want to go back to the previous saved state.
+
+  - Solution: copy **startup-config back into running-config**:
+
+    ```text
+    S1# copy startup-config running-config
+    Destination filename [running-config]?  <press Enter>
+    ```
+
+  - The device immediately switches back to the hostname and settings from `startup-config` (e.g. `MySwitch`).
+
+  - Note: `startup-config` is **merged** into `running-config`, it doesn’t necessarily wipe everything line by line, but for simple examples it effectively restores the previous state.
+
+---
+
+### 2.5.4 Capture Configuration to a Text File
+
+You can archive configurations to a **text file** using your terminal emulator (PuTTY, Tera Term, etc.). This is great for backups, documentation, or cloning configs to another device.
+
+Assume the switch is already configured and `running-config` is correct.
+
+#### Exporting config to a text file
+
+1. **Open** your terminal emulator and connect to the device (console or SSH).
+
+2. **Enable logging** in the terminal app and choose where to save the file.
+
+   Example in PuTTY:
+
+   - Go to **Session → Logging**.
+   - Select **“All session output”**.
+   - Set **Log file name**, e.g. `MySwitchLogs.txt`.
+
+3. From the switch, display the config you want to capture:
+
+   ```text
+   Sw-Floor-1# show running-config
+   ```
+
+   or
+
+   ```text
+   Sw-Floor-1# show startup-config
+   ```
+
+   Everything printed in the terminal window is written to the log file.
+
+4. **Disable logging** after the output finishes.
+
+   - In PuTTY, set **Session logging** back to **“None”**.
+
+Now you have a text file with the full configuration.
+
+#### Restoring a configuration from a text file
+
+1. On the device, enter **global configuration mode**:
+
+   ```text
+   Switch# configure terminal
+   ```
+
+2. Open the saved text file on your PC, **select all**, and **copy**.
+
+3. **Paste** the contents into the terminal window.
+
+   - IOS will process each line as if you typed it manually.
+   - Those commands become the new **running-config**.
+
+You can then save it permanently with:
+
+```text
+Switch# copy running-config startup-config
+```
+
+---
+
+### 2.5.5 Packet Tracer – Configure Initial Switch Settings
+
+This PT activity puts everything from 2.4 and 2.5 into practice:
+
+- Set basic switch identity:
+
+  - `hostname`
+  - passwords (console, VTY, enable secret)
+  - banner message (MOTD)
+
+- Secure access to:
+
+  - **Console** (local admin)
+  - **VTY lines** (remote admin via Telnet/SSH)
+  - **Privileged EXEC** (`enable secret`)
+
+- Use the correct save / verify commands:
+
+  ```text
+  Switch# show running-config
+  Switch# copy running-config startup-config
+  ```
+
+End goal: a switch with secure administrative access whose configuration is **properly saved** and ready for reloads or power loss.
+
