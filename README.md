@@ -51,10 +51,16 @@ Focus is on **IOS basics, device setup, IP addressing, and connectivity testing*
   - [2.4.7 Syntax Checker – Basic Device Configuration](#247-syntax-checker--basic-device-configuration)
   - [2.4.8 Check Your Understanding – Basic Device Configuration](#248-check-your-understanding--basic-device-configuration)
 - [2.5 Save Configurations](#25-save-configurations)
+  - [2.5.1 Configuration Files](#251-configuration-files)
+  - [2.5.2 Alter the Running Configuration](#252-alter-the-running-configuration)
+  - [2.5.3 Video – Alter the Running Configuration](#253-video--alter-the-running-configuration)
+  - [2.5.4 Capture Configuration to a Text File](#254-capture-configuration-to-a-text-file)
+  - [2.5.5 Packet Tracer – Configure Initial Switch Settings](#255-packet-tracer--configure-initial-switch-settings)
 - [2.6 Ports and Addresses](#26-ports-and-addresses)
 - [2.7 Configure IP Addressing](#27-configure-ip-addressing)
 - [2.8 Verify Connectivity](#28-verify-connectivity)
 - [2.9 Practice Ideas](#29-practice-ideas)
+
 
 ---
 
