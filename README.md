@@ -1776,3 +1776,157 @@ If first ping is 80% success and then 100% on retry, that’s normal ARP behavio
 - Whether VLAN 1 SVIs are **up** (`no shutdown`) and ports are in VLAN 1.
 
 ---
+
+## 2.8 Verify Connectivity
+
+Topic objective: Verify that interfaces and IP addresses are correctly configured, and confirm end-to-end connectivity using IOS and host tools.
+
+Think of this section as:
+
+- checking **interfaces + IPs** on switches  
+- using **ping** to test **device-to-device** connectivity  
+- verifying things in **both directions** (PC → switch and switch → PC)
+
+---
+
+### 2.8.1 Video Activity – Test the Interface Assignment
+
+You use **`show ip interface brief`** on switches to quickly check:
+
+- which interfaces exist  
+- their **IP addresses**  
+- whether they are **up / down**
+
+Typical workflow from the video:
+
+1. **Console into S1**
+
+   - Connect PC-A to S1’s **console** port.
+   - Open the terminal emulator, press Enter to reach the CLI.
+   - Go to **Privileged EXEC**:  
+     `enable`
+
+2. **Check the SVI (VLAN 1) on S1**
+
+   ```text
+   S1# show ip interface brief
+   ```
+
+   - Look for the line `Vlan1`.
+   - Confirm the IP address: `192.168.1.2`
+   - Check status columns:
+     - **Status** – administratively up/down
+     - **Protocol** – line protocol up/down
+
+   If you see **“administratively down, down”**, the interface is shut.
+
+3. **Bring VLAN 1 up on S1**
+
+   ```text
+   S1# configure terminal
+   S1(config)# interface vlan 1
+   S1(config-if)# no shutdown
+   ```
+
+   - You’ll see a message: `Interface Vlan1, changed state to up`.
+   - Return to Privileged EXEC and verify:
+
+   ```text
+   S1(config-if)# end
+   S1# show ip interface brief
+   ```
+
+   - Now `Vlan1` should show **up / up**.
+
+4. **Console into S2 and configure its SVI**
+
+   - Connect PC-B to S2’s console port, open the terminal, go to Privileged EXEC:
+
+   ```text
+   S2> enable
+   S2# show ip interface brief
+   ```
+
+   - `Vlan1` has **no IP address yet**.
+
+   Configure and activate it:
+
+   ```text
+   S2# configure terminal
+   S2(config)# interface vlan 1
+   S2(config-if)# ip address 192.168.1.3 255.255.255.0
+   S2(config-if)# no shutdown
+   S2(config-if)# end
+   S2# show ip interface brief
+   ```
+
+   - Confirm `Vlan1` now has **192.168.1.3** and status **up / up**.
+
+**Key idea:**  
+Use `show ip interface brief` as your **go-to health check** for switch interfaces and SVIs: address + status in one table.
+
+---
+
+### 2.8.2 Video Activity – Test End-to-End Connectivity
+
+Now that interfaces and addresses are set, you test actual connectivity with **`ping`**.
+
+1. **Ping from PC-A to S1**
+
+   On **PC-A** Command Prompt:
+
+   ```text
+   C:\> ping 192.168.1.2
+   ```
+
+   - Often the **first ping times out** and the next 3 are successful.
+   - This is normal on first contact (ARP / cache warm-up).
+   - If you ping again, **all 4** replies should succeed.
+
+2. **Ping from PC-A to S2**
+
+   ```text
+   C:\> ping 192.168.1.3
+   ```
+
+   - Same expectation: maybe first timeout, then success.
+   - Repeat once; you should see 4/4 replies.
+
+3. **Ping from PC-A to PC-B**
+
+   ```text
+   C:\> ping 192.168.1.11
+   ```
+
+   - Tests end-to-end path across both switches.
+   - All 4 replies should succeed.
+
+4. **Ping in the reverse direction (PC-B → PC-A)**
+
+   On **PC-B**:
+
+   ```text
+   C:\> ping 192.168.1.10
+   ```
+
+   - Verifies connectivity **backwards**.
+   - 4/4 replies confirms symmetric connectivity.
+
+5. **Why test both directions?**
+
+   - If **A → B** works but **B → A** fails, it can indicate:
+     - Firewall rules (e.g. Windows Firewall blocking ICMP echo requests)
+     - Asymmetric routing or ACL issues (later in the course)
+   - In labs, Windows Firewall often needs to be disabled to allow `ping`.
+
+**Checklist for connectivity labs**
+
+- [ ] `show ip interface brief` on switches – VLAN 1 has correct IP and is **up/up**  
+- [ ] PCs have correct IP, mask, gateway (from 2.7)  
+- [ ] `ping` from each PC to:
+  - its **default gateway**
+  - the **other switch**
+  - the **other PC**
+- [ ] Test **both directions** (A → B and B → A)
+
+If all those pings succeed, your basic Layer 3 connectivity for this module is working.
