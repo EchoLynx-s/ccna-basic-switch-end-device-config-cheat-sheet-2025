@@ -65,19 +65,6 @@ This repo is just my **personal brain-dump** for Module 2 so I can quickly find:
 
 ---
 
-## How to Use This Cheat Sheet
-
-- The **section numbers (2.1, 2.2, 2.3, …)** match NetAcad, so you can follow along while watching/reading.
-- When I do a lab, I scroll to that section and use:
-  - **🧠 Big idea** → one-paragraph concept reminder.
-  - **💻 Core commands** → copy/paste CLI blocks.
-  - **✅ Checklist** → what I should be able to do before moving on.
-- Before quizzes/exams, I skim all **🧠 Big idea** blocks and some key commands.
-
-> For now this file is mostly a **skeleton**. I’ll fill each section as I progress through the module.
-
----
-
 ## Module Map
 
 High-level view of what’s in this module:
@@ -118,26 +105,14 @@ High-level view of what’s in this module:
 
 ### 2.0.1 Why should I take this module?
 
-In Module 1 you looked at what networks are and why they matter.  
-In Module 2 you actually start **configuring real devices**.
+Welcome to **Basic Switch and End Device Configuration**!
 
-As a network technician/engineer you will:
+As part of your career in networking, you might have to set up a new network or maintain and upgrade an existing one. In either case, you’ll configure switches and end devices so that they are secure and perform effectively based on your requirements.
 
-- Set up **new networks** or maintain and upgrade existing ones.
-- Configure **switches and end devices** so they are **secure** and **fit the requirements** of the network.
-- Take devices that come with only a **generic factory config** and turn them into properly tuned nodes in your topology.
+Out of the box, switches and end devices come with some general configuration. But for your particular network, switches and end devices require your specific information and instructions. In this module, you will learn how to access Cisco IOS network devices. You will learn basic configuration commands and use them to configure and verify a Cisco IOS device and an end device with an IP address.
 
-In this module you learn how to:
+Of course, there is much more to network administration, but none of that can happen without first configuring switches and end devices.
 
-- **Access Cisco IOS** on network devices.
-- Use **basic configuration commands**.
-- Configure and verify:
-  - a Cisco IOS device (switch), and  
-  - an end device (PC) with an **IP address**.
-
-Everything else in network administration (routing, VLANs, security, etc.) depends on first being able to **log in, configure, and verify** your switches and hosts.
-
----
 
 ### 2.0.2 What will I learn to do in this module?
 
@@ -321,5 +296,228 @@ This quiz usually checks that you can:
 - Identify the role of **terminal emulation programs** (PuTTY, Tera Term, etc.).
 
 Use this section as a reminder before taking the NetAcad mini-quiz — if you can explain those bullets in your own words, you’re good.  
+
+---
+
+## 2.2 IOS Navigation  
+
+**Topic objective:** Understand the main IOS command modes and how to move between them efficiently.
+
+At this point you’re not expected to know every command, just:
+
+- which **mode** you’re in,  
+- what you’re allowed to do there,  
+- and which command gets you to the mode you actually need.  
+
+---
+
+### 2.2.1 Primary Command Modes
+
+IOS uses different modes to separate privileges.
+
+**User EXEC mode (`>` prompt)**  
+
+- “View-only” / basic monitoring.  
+- Limited commands: e.g. `ping`, some `show` commands, `exit`.  
+- Prompt examples:
+
+```text
+Switch>
+Router>
+```
+
+**Privileged EXEC mode (`#` prompt)**  
+
+- Full monitoring and management commands.  
+- Required before you can enter configuration modes.  
+- Prompt examples:
+
+```text
+Switch#
+Router#
+```
+
+**How to move between them**
+
+```text
+Switch> enable        ← user EXEC → privileged EXEC
+Switch# disable       ← privileged EXEC → user EXEC
+```
+
+If a command isn’t working even though the syntax looks right, **check the prompt first** – you’re probably in the wrong mode.
+
+---
+
+### 2.2.2 Configuration Mode and Subconfiguration Modes
+
+To actually **change** the device config, you go into **global configuration mode**:
+
+```text
+Switch# configure terminal
+Switch(config)#
+```
+
+From global config you can reach many **subconfiguration** modes.
+
+Common ones in this module:
+
+**Line configuration mode – console, vty, aux**
+
+```text
+Switch(config)# line console 0
+Switch(config-line)#
+```
+
+**Interface configuration mode – switchport or routed interface**
+
+```text
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)#
+```
+
+**Prompts to remember**
+
+- `Switch(config)#` → global configuration  
+- `Switch(config-line)#` → line configuration  
+- `Switch(config-if)#` → interface configuration  
+
+You normally move **down** the tree with specific commands (`line …`, `interface …`) and **up** with `exit` or `end`.
+
+---
+
+### 2.2.3 Video – IOS CLI Primary Command Modes
+
+The video basically walks through:
+
+- Opening a **console** session in a terminal emulator.  
+- Landing in **User EXEC** (`Switch>`).  
+- Typing `enable` to reach **Privileged EXEC** (`Switch#`).  
+- Typing `configure terminal` to reach **Global Config** (`Switch(config)#`).  
+- Entering interface config:
+
+```text
+Switch(config)# interface vlan 1
+Switch(config-if)#
+```
+
+**Key message**
+
+> Many commands only work in certain modes.  
+> If the syntax is correct but IOS complains, check the **mode** shown by your prompt.
+
+---
+
+### 2.2.4 Navigate Between IOS Modes
+
+This section is the **movement toolkit** between modes.
+
+**Core navigation commands**
+
+```text
+enable                → user EXEC → privileged EXEC
+disable               → privileged EXEC → user EXEC
+
+configure terminal    → privileged EXEC → global config
+(conf t)
+
+exit                  → up one level (e.g. config-if → config, config → #)
+end                   → jump straight back to privileged EXEC (#)
+Ctrl+Z                → same as end from config modes
+```
+
+**Examples from the module**
+
+User → Privileged → Global config:
+
+```text
+Switch> enable
+Switch# configure terminal
+Switch(config)#
+```
+
+Global config → line config → back:
+
+```text
+Switch(config)# line console 0
+Switch(config-line)# exit
+Switch(config)#
+```
+
+Move between sub-modes directly:
+
+```text
+Switch(config-line)# interface vlan 1
+Switch(config-if)#
+Switch(config-if)# interface FastEthernet0/1
+Switch(config-if)#
+```
+
+Escape back to Privileged EXEC from anywhere:
+
+```text
+Switch(config-if)# end
+Switch#
+```
+
+(or press **Ctrl+Z**)
+
+Being quick with these transitions saves a ton of time during labs and exams.
+
+---
+
+### 2.2.5 Video – Navigate Between IOS Modes
+
+The second video reinforces the same ideas with a live demo:
+
+- `enable` / `disable` – toggle between user and privileged EXEC.  
+- `configure terminal` / `config t` – enter global config.  
+- `exit` – step up one level (sub-mode → global config, or `#` → close console).  
+- `line console 0`, `line vty 0 15`, `interface vlan 1`, `interface fastethernet 0/1` – examples of sub-modes.  
+- `end` or **Ctrl+Z** – exit all config modes straight back to `Switch#`.
+
+**Takeaway**
+
+Learn the **pattern**, not just the commands:  
+
+`> → # → (config)# → (config-XYZ)# → #`
+
+---
+
+### 2.2.6 A Note About Syntax Checker Activities
+
+NetAcad’s **Syntax Checker** is a lightweight simulator focused on **exact command syntax**:
+
+- You’re given a list of required commands.  
+- You must type them **exactly** as instructed to move on.  
+- It doesn’t support abbreviations or shortcuts the way real IOS / Packet Tracer does.
+
+Use it to:
+
+- Build **muscle memory** for core commands and modes.  
+- Practice without worrying about “breaking” a real device.
+
+Later, **Packet Tracer** lets you be more flexible (`conf t`, `int fa0/1`, etc.), closer to real gear.
+
+---
+
+### 2.2.7 Syntax Checker – Navigate Between IOS Modes
+
+This specific activity makes you practice the whole path:
+
+- `enable` / `disable`  
+- `configure terminal`  
+- `exit`  
+- `line console 0`  
+- `line vty 0 15`  
+- `interface vlan 1`  
+- and usually `end` / **Ctrl+Z**
+
+Use this mini-checklist while doing it:
+
+- Do I know **which mode** I’m in from the prompt?  
+- Do I know **which command** moves me to the mode I want?  
+- Can I get back to `Switch#` quickly with `end` / **Ctrl+Z`?  
+
+If you can move around confidently without thinking about it, you’re ready for the later config sections.
 
 ---
