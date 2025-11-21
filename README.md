@@ -800,3 +800,296 @@ Skills you practice (real gear or PT physical mode):
    - Same idea but different physical cable/port.
 
 This lab ties everything together: physical connection, terminal client, IOS modes, basic commands, and your new shortcut skills.
+
+---
+## 2.4 Basic Device Configuration
+
+**Topic objective:** Apply a basic and *secure* initial configuration to a Cisco switch:
+
+- Give the device a meaningful hostname.
+- Lock down **console**, **VTY**, and **privileged EXEC** access with passwords.
+- Encrypt those passwords in the config file.
+- Display a legal **banner** before login.
+- Practice the full workflow in Syntax Checker / Packet Tracer.
+
+---
+
+### 2.4.1 Device Names
+
+You’ve now seen IOS, modes, and commands. Time to start actually *configuring* the box.
+
+The very first setting on a new device should be a **hostname** so you know what you’re connected to (especially over SSH).
+
+**Hostname guidelines**
+
+Good hostnames should:
+
+- Start with a **letter**.  
+- Contain **no spaces**.  
+- End with a **letter or digit**.  
+- Use only **letters, digits, and dashes** (`-`).  
+- Be **less than 64 characters**.
+
+Most orgs use a naming convention that encodes:
+
+- **Location** (e.g. `Sw-Floor-1`, `Rtr-DC1`).  
+- **Role** (core, distribution, access, lab, etc.).  
+
+> Example naming convention: `Sw-Floor-1`, `Sw-Floor-2`, `Sw-Floor-3`.
+
+**Set the hostname**
+
+From privileged EXEC:
+
+```text
+Switch# configure terminal
+Switch(config)# hostname Sw-Floor-1
+Sw-Floor-1(config)#
+To reset to the default name:
+
+text
+Always show details
+
+Copy code
+Sw-Floor-1(config)# no hostname
+Switch(config)#
+Keep your documentation updated whenever a device is added or renamed.
+
+2.4.2 Password Guidelines
+Weak or reused passwords are still one of the biggest security problems.
+
+Every network device (home routers, enterprise switches/routers, firewalls) should:
+
+Restrict administrative access with passwords or other auth (SSH keys, TACACS+, RADIUS).
+
+Use different passwords for console, VTY, and enable (in real networks).
+
+Prefer encrypted storage of passwords.
+
+When choosing passwords in production:
+
+Use more than eight characters (aim for 12–16+).
+
+Mix upper/lowercase, numbers, symbols.
+
+Avoid reusing the same password on multiple devices.
+
+Avoid dictionary words and obvious patterns.
+
+Note: In NetAcad labs you’ll often use simple passwords like cisco and class.
+These are intentionally weak and only acceptable in lab/demo environments.
+
+2.4.3 Configure Passwords
+Here you actually configure mode passwords:
+
+Console (local, physical access).
+
+Privileged EXEC (enable secret).
+
+VTY lines (Telnet/SSH sessions).
+
+You start in user EXEC when you first connect via console.
+
+Secure console access (user EXEC)
+text
+Always show details
+
+Copy code
+Sw-Floor-1# configure terminal
+Sw-Floor-1(config)# line console 0
+Sw-Floor-1(config-line)# password cisco
+Sw-Floor-1(config-line)# login
+Sw-Floor-1(config-line)# end
+Sw-Floor-1#
+Now, to reach the user EXEC prompt you must enter the console password (cisco in this lab).
+
+Secure privileged EXEC access (enable secret)
+Privileged EXEC gives full access, so you must protect it.
+
+text
+Always show details
+
+Copy code
+Sw-Floor-1# configure terminal
+Sw-Floor-1(config)# enable secret class
+Sw-Floor-1(config)# exit
+Sw-Floor-1#
+enable secret stores the password in encrypted form.
+
+Prefer enable secret over enable password.
+
+Secure VTY lines (remote access)
+VTY (virtual terminal) lines control remote CLI sessions (Telnet/SSH).
+On many switches you have lines 0–15 (16 total).
+
+text
+Always show details
+
+Copy code
+Sw-Floor-1# configure terminal
+Sw-Floor-1(config)# line vty 0 15
+Sw-Floor-1(config-line)# password cisco
+Sw-Floor-1(config-line)# login
+Sw-Floor-1(config-line)# end
+Sw-Floor-1#
+Later, when you enable SSH, you’ll still use these VTY lines but usually with username + password or keys.
+
+2.4.4 Encrypt Passwords
+By default, many passwords in running-config / startup-config appear in plaintext, which is bad if someone can see the config.
+
+To obfuscate all simple (type 0) passwords in the config, use:
+
+text
+Always show details
+
+Copy code
+Sw-Floor-1# configure terminal
+Sw-Floor-1(config)# service password-encryption
+Sw-Floor-1(config)# end
+Sw-Floor-1#
+Now check the config:
+
+text
+Always show details
+
+Copy code
+Sw-Floor-1# show running-config
+!
+line con 0
+ password 7 094F471A1A0A
+ login
+!
+line vty 0 4
+ password 7 094F471A1A0A
+ login
+!
+line vty 5 15
+ password 7 094F471A1A0A
+ login
+!
+end
+The 7 indicates a type 7 (weak) Cisco encryption.
+
+This protects against casual shoulder-surfing / screenshots, not serious attackers.
+
+The goal here is mainly to prevent anyone reading the config from seeing passwords in clear text.
+
+2.4.5 Banner Messages
+Passwords are not enough; you also want a legal warning for anyone accessing the device.
+
+Use a Message of the Day (MOTD) banner:
+
+text
+Always show details
+
+Copy code
+Sw-Floor-1# configure terminal
+Sw-Floor-1(config)# banner motd #Authorized Access Only#
+Notes:
+
+The # is the delimiter — you can use any character that does not appear inside the message.
+
+Real banners often contain a full legal statement, for example:
+
+text
+Always show details
+
+Copy code
+Sw-Floor-1(config)# banner motd #Authorized access only!
+Violators will be prosecuted to the full extent of the law!#
+After configuring the banner, every login attempt (console or VTY) will display it before prompting for a password.
+
+2.4.6 Video – Secure Administrative Access to a Switch
+The video walks through the full secure setup:
+
+Console access without a password – shows the initial risk.
+
+Set a console password and enable login.
+
+Set an enable secret for privileged EXEC.
+
+Configure VTY passwords for remote access (lines 0 15).
+
+Use show running-config to verify where passwords appear.
+
+Apply service password-encryption to encrypt console/VTY passwords.
+
+Configure a MOTD banner with a full legal warning.
+
+Exit and reconnect to confirm:
+
+Banner shows on login.
+
+Console password is required.
+
+enable prompts for the secret.
+
+This is your “secure basics” recipe for any lab switch.
+
+2.4.7 Syntax Checker – Basic Device Configuration
+The Syntax Checker activity makes you practice the whole sequence in order:
+
+Enter global configuration mode.
+
+Assign a device name (hostname).
+
+Secure user EXEC (console) access with a password + login.
+
+Secure privileged EXEC access with enable secret.
+
+Secure VTY lines (line vty 0 15) with password + login.
+
+Encrypt all plaintext passwords with service password-encryption.
+
+Configure a login banner (banner motd ...).
+
+Use this mental checklist while working:
+
+enable
+
+configure terminal
+
+hostname ...
+
+line console 0 → password ... → login → end
+
+configure terminal → enable secret ...
+
+line vty 0 15 → password ... → login → end
+
+configure terminal → service password-encryption
+
+banner motd #...#
+
+Once you can do that sequence from memory, you’re in great shape for the later labs and the exam.
+
+2.4.8 Check Your Understanding – Basic Device Configuration
+The quiz for this topic typically checks that you can:
+
+Recognize good hostnames vs bad ones.
+
+Recall strong password practices.
+
+Identify which commands secure:
+
+Console (line console 0, password, login)
+
+VTY (line vty 0 15, password, login)
+
+Privileged EXEC (enable secret)
+
+Know what service password-encryption does (and does not) protect.
+
+Understand the purpose of a MOTD banner.
+
+If you can explain, in your own words, how to:
+
+Name the device,
+
+Lock down console + VTY + enable,
+
+Encrypt passwords, and
+
+Add a legal warning,
+
+…then you’ve nailed 2.4 Basic Device Configuration.
