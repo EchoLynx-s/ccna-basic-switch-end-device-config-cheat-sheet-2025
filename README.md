@@ -32,15 +32,22 @@ Focus is on **IOS basics, device setup, IP addressing, and connectivity testing*
   - [2.2.5 Video – Navigate Between IOS Modes](#225-video--navigate-between-ios-modes)
   - [2.2.6 A Note About Syntax Checker Activities](#226-a-note-about-syntax-checker-activities)
   - [2.2.7 Syntax Checker – Navigate Between IOS Modes](#227-syntax-checker--navigate-between-ios-modes)
+  - [2.2.8 Check Your Understanding – IOS Navigation](#228-check-your-understanding--ios-navigation)
 - [2.3 The Command Structure](#23-the-command-structure)
+  - [2.3.1 Basic IOS Command Structure](#231-basic-ios-command-structure)
+  - [2.3.2 IOS Command Syntax Check](#232-ios-command-syntax-check)
+  - [2.3.3 IOS Help Features](#233-ios-help-features)
+  - [2.3.4 Video – Context Sensitive Help and Command Syntax Check](#234-video--context-sensitive-help-and-command-syntax-check)
+  - [2.3.5 Hot Keys and Shortcuts](#235-hot-keys-and-shortcuts)
+  - [2.3.6 Video – Hot Keys and Shortcuts](#236-video--hot-keys-and-shortcuts)
+  - [2.3.7 Packet Tracer – Navigate the IOS](#237-packet-tracer--navigate-the-ios)
+  - [2.3.8 Lab – Navigate the IOS by Using Tera Term for Console Connectivity](#238-lab--navigate-the-ios-by-using-tera-term-for-console-connectivity)
 - [2.4 Basic Device Configuration](#24-basic-device-configuration)
 - [2.5 Save Configurations](#25-save-configurations)
 - [2.6 Ports and Addresses](#26-ports-and-addresses)
 - [2.7 Configure IP Addressing](#27-configure-ip-addressing)
 - [2.8 Verify Connectivity](#28-verify-connectivity)
 - [2.9 Practice Ideas](#29-practice-ideas)
-
-
 
 ---
 
@@ -519,5 +526,33 @@ Use this mini-checklist while doing it:
 - Can I get back to `Switch#` quickly with `end` / **Ctrl+Z`?  
 
 If you can move around confidently without thinking about it, you’re ready for the later config sections.
+
+---
+
+### 2.2.8 Check Your Understanding – IOS Navigation
+
+This mini-quiz is just making sure you really **own the prompts and mode changes**:
+
+- **Q1 – “Which IOS mode allows access to all commands and features?”**  
+  That’s the mode with full monitoring + management power.  
+  👉 Think: the prompt that ends with `#` **before** any `(config)` text.
+
+- **Q2 – “Which IOS mode are you in if `Switch(config)#` is displayed?”**  
+  When you see `(config)#` after the hostname, you’re in **global configuration mode**, where you change device-wide settings.
+
+- **Q3 – “Which IOS mode are you in if `Switch>` is displayed?”**  
+  Prompt ending with `>` means **user EXEC mode** – basic, mostly “view-only” monitoring.
+
+- **Q4 – “Which two commands would return you to the privileged EXEC prompt regardless of the configuration mode?”**  
+  From *any* config/sub-config mode you can:
+  - Use `end` to jump straight back to **privileged EXEC (`Switch#`)**.  
+  - Press **`Ctrl+Z`** (same effect as `end`).  
+
+  Notes for contrast:
+  - `exit` only moves you **up one level** (e.g. `config-if` → `config` → `#`).  
+  - `disable` drops you from **privileged EXEC → user EXEC (`Switch>`)**.  
+  - `enable` goes **user EXEC → privileged EXEC**, not from config modes.
+
+If you can look at a prompt and instantly say **which mode you’re in** and **which command gets you back to `Switch#`**, you’re solid for this quiz.
 
 ---
